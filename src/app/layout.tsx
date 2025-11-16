@@ -6,8 +6,8 @@ import "@/styles/globals.css";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Next.js TypeScript Template",
-  description: "A professional Next.js template with TypeScript",
+  title: "Tra Cứu Văn Bản Pháp Luật",
+  description: "Search and retrieve updated legal documents and regulations",
 };
 
 type TProps = Readonly<IChildren>;
