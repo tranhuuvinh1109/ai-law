@@ -1,76 +1,48 @@
 "use client";
 
-import { Menu, X } from "lucide-react";
+import { HEADERS } from "@/constants";
+import { Menu, MessageCircle, TextAlignJustify, X } from "lucide-react";
+import Link from "next/link";
 import { useState } from "react";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 
 export function Header() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-
-  const navItems = [
-    "GIỚI THIỆU",
-    "DỊCH VỤ LUẬT SƯ",
-    "TƯ VẤN PHÁP LUẬT",
-    "TỬ ĐIỀN PHÁP LUẬT",
-    "VĂN BẢN PHÁP LUẬT",
-    "BIỂU MẪU",
-    "GIÁO DỤC",
-    "LIÊN HỆ",
-  ];
-
+  const [isOpen, setIsOpen] = useState(false);
   return (
     <header>
-      {/* Top Navigation Bar */}
-      <nav className="bg-[#8B6F47] text-white">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-0 lg:px-6">
-          {/* Home Icon */}
-          <div className="flex items-center gap-0">
-            <div className="bg-yellow-400 px-4 py-3 text-lg font-bold text-[#8B6F47]">🏠</div>
-          </div>
+      <div className="hidden items-center gap-4 md:flex">
+        <MessageCircle className="h-10 w-10 text-[#0A4FD5]" />
+        {HEADERS.map((item) => (
+          <Link
+            href={item.href}
+            key={item.href}
+            className="px-4 py-2 text-base font-medium hover:text-[#0A4FD5]"
+          >
+            {item.label}
+          </Link>
+        ))}
+      </div>
+      <div className="flex justify-end md:hidden">
+        <Popover onOpenChange={(open) => setIsOpen(open)}>
+          <PopoverTrigger>
+            <button className="rounded bg-[#0A4FD5] px-3 py-2 text-white">
+              {isOpen ? <X className="h-5 w-5" /> : <TextAlignJustify className="h-5 w-5" />}
+            </button>
+          </PopoverTrigger>
 
-          {/* Desktop Navigation */}
-          <div className="ml-6 hidden flex-1 items-center gap-6 lg:flex">
-            {navItems.map((item) => (
-              <a
-                key={item}
-                href="#"
-                className="py-4 text-sm font-semibold transition hover:opacity-80"
+          <PopoverContent className="flex w-56 flex-col gap-4">
+            {HEADERS.map((item) => (
+              <Link
+                href={item.href}
+                key={item.href}
+                className="px-2.5 py-1 text-base font-medium hover:text-[#0A4FD5]"
               >
-                {item}
-              </a>
+                {item.label}
+              </Link>
             ))}
-          </div>
-
-          {/* Language Selector */}
-          <div className="ml-auto flex items-center gap-2 lg:ml-0">
-            <span className="text-xs">🇬🇧</span>
-            <a href="#" className="text-sm transition hover:opacity-80">
-              English
-            </a>
-          </div>
-
-          {/* Mobile Menu Button */}
-          <button className="ml-4 p-2 lg:hidden" onClick={() => setIsMenuOpen(!isMenuOpen)}>
-            {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
-        </div>
-
-        {/* Mobile Navigation Menu */}
-        {isMenuOpen && (
-          <div className="border-t border-[#6B5630] bg-[#7A5E3C] py-4 lg:hidden">
-            <div className="space-y-3 px-4">
-              {navItems.map((item) => (
-                <a
-                  key={item}
-                  href="#"
-                  className="block py-2 text-sm font-semibold transition hover:opacity-80"
-                >
-                  {item}
-                </a>
-              ))}
-            </div>
-          </div>
-        )}
-      </nav>
+          </PopoverContent>
+        </Popover>
+      </div>
     </header>
   );
 }

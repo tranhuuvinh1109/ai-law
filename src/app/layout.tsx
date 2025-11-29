@@ -4,6 +4,7 @@ import { geistMono, geistSans } from "@/config";
 
 import "@/styles/globals.css";
 import type { Metadata } from "next";
+import { AppProvider } from "@/providers";
 
 export const metadata: Metadata = {
   title: "Tra Cứu Văn Bản Pháp Luật",
@@ -13,7 +14,9 @@ export const metadata: Metadata = {
 type TProps = Readonly<IChildren>;
 const RootLayout: FC<TProps> = ({ children }) => (
   <html lang="en">
-    <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>{children}</body>
+    <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+      <AppProvider>{children}</AppProvider>
+    </body>
   </html>
 );
 

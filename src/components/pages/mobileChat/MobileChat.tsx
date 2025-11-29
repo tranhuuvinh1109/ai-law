@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from "react";
 import { Send, Upload, Mic, Menu, X } from "lucide-react";
 
