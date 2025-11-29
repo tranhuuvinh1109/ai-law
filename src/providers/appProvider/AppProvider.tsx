@@ -6,6 +6,7 @@ type UserRole = "admin" | "user" | null;
 interface User {
   role: UserRole;
   name: string;
+  email?: string;
 }
 
 interface AppContextProps {
@@ -19,6 +20,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User>({
     role: "admin",
     name: "Admin",
+    email: "admin@gmail.com",
   });
 
   return <AppContext.Provider value={{ user, setUser }}>{children}</AppContext.Provider>;

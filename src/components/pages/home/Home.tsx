@@ -1,5 +1,6 @@
 import { Header } from "@/components/header";
 import { MessageCircle, Search, FileText, Send, User } from "lucide-react";
+import Link from "next/link";
 
 interface HomeProps {
   //   onNavigate: (page: string) => void;
@@ -59,8 +60,8 @@ export function HomePage({ user }: HomeProps) {
             <h3 className="mb-2 text-[#111827]">Tra cứu thủ tục</h3>
             <p className="text-[#111827] opacity-70">Tìm nhanh thủ tục theo từ khóa</p>
           </div>
-          <div
-            // onClick={() => onNavigate("chat")}
+          <Link
+            href={"chat"}
             className="cursor-pointer rounded-xl bg-white p-8 shadow-sm transition-shadow hover:shadow-md"
           >
             <MessageCircle className="mb-4 h-12 w-12 text-[#0A4FD5]" />
@@ -68,7 +69,7 @@ export function HomePage({ user }: HomeProps) {
             <p className="text-[#111827] opacity-70">
               Nhận hướng dẫn chi tiết cho trường hợp của bạn
             </p>
-          </div>
+          </Link>
           <div
             // onClick={() => onNavigate("portal")}
             className="cursor-pointer rounded-xl bg-white p-8 shadow-sm transition-shadow hover:shadow-md"
@@ -77,14 +78,14 @@ export function HomePage({ user }: HomeProps) {
             <h3 className="mb-2 text-[#111827]">Nộp hồ sơ</h3>
             <p className="text-[#111827] opacity-70">Nộp trực tuyến & theo dõi tiến trình</p>
           </div>
-          <div
-            // onClick={() => onNavigate("account")}
+          <Link
+            href={"tai-khoan"}
             className="cursor-pointer rounded-xl bg-white p-8 shadow-sm transition-shadow hover:shadow-md"
           >
             <User className="mb-4 h-12 w-12 text-[#0A4FD5]" />
             <h3 className="mb-2 text-[#111827]">Quản lý tài khoản</h3>
             <p className="text-[#111827] opacity-70">Lưu thủ tục yêu thích và theo dõi lịch sử</p>
-          </div>
+          </Link>
         </div>
       </div>
 

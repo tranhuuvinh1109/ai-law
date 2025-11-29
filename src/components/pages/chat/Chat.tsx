@@ -10,18 +10,16 @@ import {
   Landmark,
   Home as HomeIcon,
   ChevronDown,
+  ChevronLeft,
 } from "lucide-react";
+import Link from "next/link";
 
 interface Message {
   from: "ai" | "user";
   text: string;
 }
 
-interface ChatProps {
-  onNavigate: (page: string) => void;
-}
-
-export function Chat({ onNavigate }: ChatProps) {
+export function ChatPage() {
   const [messages, setMessages] = useState<Message[]>([
     { from: "ai", text: "Xin chào! Tôi có thể giúp gì cho bạn?" },
     { from: "user", text: "Tôi muốn biết thủ tục đăng ký kinh doanh." },
@@ -63,9 +61,9 @@ export function Chat({ onNavigate }: ChatProps) {
     <div className="flex h-screen bg-[#F3F4F6]">
       {/* Sidebar */}
       <div className="flex w-[300px] flex-col border-r border-gray-200 bg-white p-6">
-        <button onClick={() => onNavigate("home")} className="mb-8 text-[#0A4FD5]">
-          ← GovAssist AI
-        </button>
+        <Link href={"/"} className="mb-8 text-[#0A4FD5]">
+          <ChevronLeft />
+        </Link>
 
         <div className="mb-8 flex items-center gap-3">
           <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-[#0A4FD5] to-[#3DDC84] text-white">
@@ -158,12 +156,9 @@ export function Chat({ onNavigate }: ChatProps) {
               )}
             </div>
           </div>
-          <button
-            onClick={() => onNavigate("procedures")}
-            className="text-sm text-[#0A4FD5] hover:underline"
-          >
+          <Link href={"/"} className="text-sm text-[#0A4FD5] hover:underline">
             Xem danh sách thủ tục
-          </button>
+          </Link>
         </div>
 
         <div className="flex-1 space-y-4 overflow-y-auto p-6">
@@ -192,12 +187,6 @@ export function Chat({ onNavigate }: ChatProps) {
               title="Upload file"
             >
               <Upload className="h-5 w-5 text-[#111827] opacity-70" />
-            </button>
-            <button
-              className="rounded-lg p-2 transition-colors hover:bg-[#F3F4F6]"
-              title="Voice input"
-            >
-              <Mic className="h-5 w-5 text-[#111827] opacity-70" />
             </button>
           </div>
           <div className="flex gap-2">
@@ -256,12 +245,7 @@ export function Chat({ onNavigate }: ChatProps) {
           </div>
         </div>
 
-        <button
-          onClick={() => onNavigate("procedure-detail")}
-          className="w-full rounded-lg bg-[#0A4FD5] py-3 text-white transition-colors hover:bg-[#083aa3]"
-        >
-          Xem chi tiết thủ tục
-        </button>
+        <Link href={"/thu-tuc/dang-ky-kinh-doanh"}>Xem chi tiết thủ tục</Link>
       </div>
     </div>
   );

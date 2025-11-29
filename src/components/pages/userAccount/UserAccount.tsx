@@ -1,11 +1,11 @@
-import { User, Mail, Lock, Bell, History, Settings } from "lucide-react";
+"use client";
 
-interface UserAccountProps {
-  onNavigate: (page: string) => void;
-  user?: { email: string; name: string; role: "user" | "admin" };
-}
+import { useApp } from "@/providers";
+import { User, Mail, Lock, Bell, History, Settings, ChevronLeft } from "lucide-react";
+import Link from "next/link";
 
-export function UserAccount({ onNavigate, user }: UserAccountProps) {
+export function UserAccountPage() {
+  const { user } = useApp();
   const chatHistory = [
     { id: "1", title: "Đăng ký kinh doanh", date: "2025-11-20", messages: 12 },
     { id: "2", title: "Chuyển nhượng đất", date: "2025-11-15", messages: 8 },
@@ -25,16 +25,16 @@ export function UserAccount({ onNavigate, user }: UserAccountProps) {
       <div className="border-b border-gray-200 bg-white">
         <div className="mx-auto max-w-[1200px] px-8 py-6">
           <div className="mb-4 flex items-center justify-between">
-            <button onClick={() => onNavigate("home")} className="text-[#0A4FD5] hover:underline">
-              ← Trang chủ
-            </button>
+            <Link href={"/"} className="text-[#0A4FD5] hover:underline">
+              <ChevronLeft />
+            </Link>
             <div className="flex gap-3">
-              <button
-                onClick={() => onNavigate("chat")}
+              <Link
+                href={"chat"}
                 className="rounded-lg bg-[#0A4FD5] px-6 py-2 text-white transition-colors hover:bg-[#083aa3]"
               >
                 Trò chuyện với AI
-              </button>
+              </Link>
             </div>
           </div>
           <h1 className="mb-2 text-[#111827]">Tài khoản của tôi</h1>
@@ -78,12 +78,12 @@ export function UserAccount({ onNavigate, user }: UserAccountProps) {
                 </button>
               </div>
 
-              <button
-                onClick={() => onNavigate("login")}
+              <Link
+                href={"dang-nhap"}
                 className="mt-6 w-full text-sm text-red-600 transition-colors hover:text-red-700"
               >
                 Đăng xuất
-              </button>
+              </Link>
             </div>
 
             {/* Stats */}
@@ -115,12 +115,9 @@ export function UserAccount({ onNavigate, user }: UserAccountProps) {
                   <History className="h-5 w-5 text-[#0A4FD5]" />
                   <h2 className="text-[#111827]">Lịch sử trò chuyện</h2>
                 </div>
-                <button
-                  onClick={() => onNavigate("chat")}
-                  className="text-sm text-[#0A4FD5] hover:underline"
-                >
+                <Link href={"chat"} className="text-sm text-[#0A4FD5] hover:underline">
                   Xem tất cả
-                </button>
+                </Link>
               </div>
               <div className="divide-y divide-gray-200">
                 {chatHistory.map((chat) => (
@@ -144,12 +141,9 @@ export function UserAccount({ onNavigate, user }: UserAccountProps) {
             <div className="rounded-xl bg-white shadow-sm">
               <div className="flex items-center justify-between border-b border-gray-200 p-6">
                 <h2 className="text-[#111827]">Thủ tục đã lưu</h2>
-                <button
-                  onClick={() => onNavigate("procedures")}
-                  className="text-sm text-[#0A4FD5] hover:underline"
-                >
+                <Link href={"/"} className="text-sm text-[#0A4FD5] hover:underline">
                   Tìm thủ tục mới
-                </button>
+                </Link>
               </div>
               <div className="divide-y divide-gray-200">
                 {savedProcedures.map((proc) => (
@@ -168,12 +162,9 @@ export function UserAccount({ onNavigate, user }: UserAccountProps) {
                         Đã lưu: {proc.savedDate}
                       </div>
                     </div>
-                    <button
-                      onClick={() => onNavigate("procedure-detail")}
-                      className="mt-3 text-sm text-[#0A4FD5] hover:underline"
-                    >
+                    <Link href={"/"} className="mt-3 text-sm text-[#0A4FD5] hover:underline">
                       Xem chi tiết →
-                    </button>
+                    </Link>
                   </div>
                 ))}
               </div>
