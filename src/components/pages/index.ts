@@ -6,3 +6,4 @@ export * from "./procedureDetail";
 export * from "./procedureList";
 export * from "./userAccount";
 export * from "./chat";
+export * from "./addProcedure";

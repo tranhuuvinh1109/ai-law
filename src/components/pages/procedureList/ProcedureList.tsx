@@ -2,10 +2,7 @@
 
 import { useState } from "react";
 import { Search, Filter, Clock } from "lucide-react";
-
-interface ProcedureListProps {
-  onNavigate: (page: string, procedureId?: string) => void;
-}
+import Link from "next/link";
 
 interface Procedure {
   id: string;
@@ -16,7 +13,7 @@ interface Procedure {
   level: string;
 }
 
-export function ProcedureList({ onNavigate }: ProcedureListProps) {
+export function ProcedureList() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [selectedLevel, setSelectedLevel] = useState("all");
@@ -87,15 +84,15 @@ export function ProcedureList({ onNavigate }: ProcedureListProps) {
       <div className="border-b border-gray-200 bg-white">
         <div className="mx-auto max-w-[1200px] px-8 py-6">
           <div className="mb-6 flex items-center justify-between">
-            <button onClick={() => onNavigate("home")} className="text-[#0A4FD5] hover:underline">
+            <Link href={"/"} className="text-[#0A4FD5] hover:underline">
               ← Quay lại
-            </button>
-            <button
-              onClick={() => onNavigate("chat")}
+            </Link>
+            <Link
+              href={"/chat"}
               className="rounded-lg bg-[#0A4FD5] px-6 py-2 text-white transition-colors hover:bg-[#083aa3]"
             >
               Chat với AI
-            </button>
+            </Link>
           </div>
           <h1 className="mb-2 text-[#111827]">Danh mục Thủ tục</h1>
           <p className="text-[#111827] opacity-70">
@@ -168,12 +165,12 @@ export function ProcedureList({ onNavigate }: ProcedureListProps) {
               <h3 className="mb-2 text-[#111827]">{proc.title}</h3>
               <p className="mb-4 text-[#111827] opacity-70">{proc.desc}</p>
               <div className="mb-4 text-sm text-[#111827] opacity-50">Cấp: {proc.level}</div>
-              <button
-                onClick={() => onNavigate("procedure-detail", proc.id)}
+              <Link
+                href={`/thu-tuc/${1}`}
                 className="w-full rounded-lg bg-[#F3F4F6] py-2 text-[#0A4FD5] transition-colors hover:bg-[#0A4FD5] hover:text-white"
               >
                 Xem chi tiết
-              </button>
+              </Link>
             </div>
           ))}
         </div>

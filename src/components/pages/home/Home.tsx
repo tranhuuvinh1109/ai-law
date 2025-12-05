@@ -52,14 +52,14 @@ export function HomePage({ user }: HomeProps) {
       {/* Features Section */}
       <div className="mx-auto max-w-[1440px] px-8 py-12">
         <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
-          <div
-            // onClick={() => onNavigate("procedures")}
+          <Link
+            href={"thu-tuc"}
             className="cursor-pointer rounded-xl bg-white p-8 shadow-sm transition-shadow hover:shadow-md"
           >
             <Search className="mb-4 h-12 w-12 text-[#0A4FD5]" />
             <h3 className="mb-2 text-[#111827]">Tra cứu thủ tục</h3>
             <p className="text-[#111827] opacity-70">Tìm nhanh thủ tục theo từ khóa</p>
-          </div>
+          </Link>
           <Link
             href={"chat"}
             className="cursor-pointer rounded-xl bg-white p-8 shadow-sm transition-shadow hover:shadow-md"
@@ -70,14 +70,6 @@ export function HomePage({ user }: HomeProps) {
               Nhận hướng dẫn chi tiết cho trường hợp của bạn
             </p>
           </Link>
-          <div
-            // onClick={() => onNavigate("portal")}
-            className="cursor-pointer rounded-xl bg-white p-8 shadow-sm transition-shadow hover:shadow-md"
-          >
-            <FileText className="mb-4 h-12 w-12 text-[#0A4FD5]" />
-            <h3 className="mb-2 text-[#111827]">Nộp hồ sơ</h3>
-            <p className="text-[#111827] opacity-70">Nộp trực tuyến & theo dõi tiến trình</p>
-          </div>
           <Link
             href={"tai-khoan"}
             className="cursor-pointer rounded-xl bg-white p-8 shadow-sm transition-shadow hover:shadow-md"
