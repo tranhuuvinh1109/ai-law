@@ -58,10 +58,8 @@ const eslintConfig = [
     settings: { "import/resolver": { typescript: { project: "./tsconfig.json" } } },
     rules: {
       "import/order": "off",
-      "react/function-component-definition": [
-        "warn",
-        { namedComponents: "arrow-function", unnamedComponents: "arrow-function" },
-      ],
+      "react/function-component-definition": "off",
+      "react/no-unescaped-entities": "off",
       "@typescript-eslint/no-unused-vars": [
         "warn",
         {
