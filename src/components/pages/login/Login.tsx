@@ -5,6 +5,8 @@ import { Mail, Lock, User, Eye, EyeOff } from "lucide-react";
 import { useApp } from "@/providers";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { useLogin, useRegister } from "@/api";
+import { E_LOCAL_STORAGE } from "@/enum";
 
 export const Login = () => {
   const { setUser } = useApp();
@@ -18,24 +20,56 @@ export const Login = () => {
     confirmPassword: "",
   });
 
+  const { mutate } = useRegister();
+  const { mutate: mutateLogin } = useLogin();
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
     // Demo login - trong thực tế sẽ gọi API
     if (isLogin) {
       // Check for admin login
-      if (formData.email === "admin@govassist.vn" && formData.password === "admin123") {
-        setUser({ email: formData.email, name: "Admin", role: "admin" });
-        router.push("/");
-      } else {
-        setUser({ email: formData.email, name: formData.name || "Người dùng", role: "user" });
-        router.push("/");
-      }
+
+      mutateLogin(
+        {
+          email: formData.email,
+          password: formData.password,
+        },
+        {
+          onSuccess: (data) => {
+            localStorage.setItem(
+              E_LOCAL_STORAGE.APP_NAME,
+              JSON.stringify({
+                access_token: data?.access_token,
+              })
+            );
+          },
+        }
+      );
+      //   if (formData.email === "admin@govassist.vn" && formData.password === "admin123") {
+
+      //     setUser({ email: formData.email, name: "Admin", role: "admin" });
+      //     router.push("/");
+      //   } else {
+      //     setUser({ email: formData.email, name: formData.name || "Người dùng", role: "user" });
+      //     router.push("/");
+      //   }
     } else {
       // Register
       if (formData.password === formData.confirmPassword) {
-        setUser({ email: formData.email, name: formData.name, role: "user" });
-        router.push("/");
+        // setUser({ email: formData.email, name: formData.name, role: "user" });
+        // router.push("/");
+        mutate(
+          { password: formData.password, username: formData.name, email: formData.email, role: 2 },
+          {
+            onSuccess: (data) => {
+              console.log("Registration successful:", data);
+            },
+            onError: (error) => {
+              console.error("Registration failed:", error);
+            },
+          }
+        );
       } else {
         alert("Mật khẩu không khớp!");
       }

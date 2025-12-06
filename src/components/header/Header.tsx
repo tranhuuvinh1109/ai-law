@@ -25,9 +25,7 @@ export const Header = () => {
       <div className="flex justify-end md:hidden">
         <Popover onOpenChange={(open) => setIsOpen(open)}>
           <PopoverTrigger>
-            <button className="rounded bg-[#0A4FD5] px-3 py-2 text-white">
-              {isOpen ? <X className="h-5 w-5" /> : <TextAlignJustify className="h-5 w-5" />}
-            </button>
+            {isOpen ? <X className="h-5 w-5" /> : <TextAlignJustify className="h-5 w-5" />}
           </PopoverTrigger>
 
           <PopoverContent className="flex w-56 flex-col gap-4">

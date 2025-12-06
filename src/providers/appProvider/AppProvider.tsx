@@ -1,27 +1,28 @@
 "use client";
-import { createContext, useContext, useState, ReactNode } from "react";
-
-type UserRole = "admin" | "user" | null;
-
-interface User {
-  role: UserRole;
-  name: string;
-  email?: string;
-}
+import { createContext, useContext, useState, ReactNode, useEffect, use } from "react";
+import { useGetUserInfo } from "@/api";
+import { UserInfoType } from "@/types/user.type";
 
 interface AppContextProps {
-  user: User;
-  setUser: (user: User) => void;
+  user: UserInfoType | undefined;
+  setUser: (user: UserInfoType) => void;
 }
 
 const AppContext = createContext<AppContextProps | undefined>(undefined);
 
 export const AppProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<User>({
-    role: "admin",
-    name: "Admin",
-    email: "admin@gmail.com",
-  });
+  const [user, setUser] = useState<UserInfoType | undefined>(undefined);
+
+  const { data } = useGetUserInfo();
+
+  console.log("User info fetched:", data, user);
+
+  useEffect(() => {
+    if (user) return;
+    if (data) {
+      setUser(data);
+    }
+  }, [data, user]);
 
   return <AppContext.Provider value={{ user, setUser }}>{children}</AppContext.Provider>;
 };
