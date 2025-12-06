@@ -2,13 +2,13 @@
 
 import { useState } from "react";
 import { Mail, Lock, User, Eye, EyeOff } from "lucide-react";
+import { useApp } from "@/providers";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
 
-interface LoginProps {
-  onNavigate: (page: string) => void;
-  onLogin: (user: { email: string; name: string; role: "user" | "admin" }) => void;
-}
-
-export const Login = ({ onNavigate, onLogin }: LoginProps) => {
+export const Login = () => {
+  const { setUser } = useApp();
+  const router = useRouter();
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
@@ -25,17 +25,17 @@ export const Login = ({ onNavigate, onLogin }: LoginProps) => {
     if (isLogin) {
       // Check for admin login
       if (formData.email === "admin@govassist.vn" && formData.password === "admin123") {
-        onLogin({ email: formData.email, name: "Admin", role: "admin" });
-        onNavigate("admin");
+        setUser({ email: formData.email, name: "Admin", role: "admin" });
+        router.push("/");
       } else {
-        onLogin({ email: formData.email, name: formData.name || "Người dùng", role: "user" });
-        onNavigate("home");
+        setUser({ email: formData.email, name: formData.name || "Người dùng", role: "user" });
+        router.push("/");
       }
     } else {
       // Register
       if (formData.password === formData.confirmPassword) {
-        onLogin({ email: formData.email, name: formData.name, role: "user" });
-        onNavigate("home");
+        setUser({ email: formData.email, name: formData.name, role: "user" });
+        router.push("/");
       } else {
         alert("Mật khẩu không khớp!");
       }
@@ -170,14 +170,11 @@ export const Login = ({ onNavigate, onLogin }: LoginProps) => {
 
         {/* Back to Home */}
         <div className="mt-6 text-center">
-          <button
-            onClick={() => onNavigate("home")}
-            className="text-sm text-[#0A4FD5] hover:underline"
-          >
+          <Link href={"/"} className="text-sm text-[#0A4FD5] hover:underline">
             ← Quay lại trang chủ
-          </button>
+          </Link>
         </div>
       </div>
     </div>
   );
-}
+};
