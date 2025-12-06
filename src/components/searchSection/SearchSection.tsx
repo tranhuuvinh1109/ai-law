@@ -2,7 +2,7 @@
 
 import { Search } from "lucide-react";
 
-export function SearchSection() {
+export const SearchSection = () => {
   return (
     <div className="mb-6 rounded border border-gray-200 bg-white p-4 shadow-sm lg:p-6">
       <div className="flex gap-3">

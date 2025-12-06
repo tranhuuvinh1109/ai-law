@@ -1,5 +1,5 @@
 import { Header } from "@/components/header";
-import { MessageCircle, Search, FileText, Send, User } from "lucide-react";
+import { MessageCircle, Search, Send, User } from "lucide-react";
 import Link from "next/link";
 
 interface HomeProps {
@@ -7,7 +7,8 @@ interface HomeProps {
   user?: { email: string; name: string; role: "user" | "admin" } | null;
 }
 
-export function HomePage({ user }: HomeProps) {
+export const HomePage = ({ user }: HomeProps) => {
+  console.log("User on HomePage:", user);
   return (
     <div className="min-h-screen bg-[#F3F4F6]">
       {/* Hero Section */}
@@ -100,4 +101,4 @@ export function HomePage({ user }: HomeProps) {
       </div>
     </div>
   );
-}
+};

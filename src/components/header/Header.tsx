@@ -1,12 +1,12 @@
 "use client";
 
 import { HEADERS } from "@/constants";
-import { Menu, MessageCircle, TextAlignJustify, X } from "lucide-react";
+import { MessageCircle, TextAlignJustify, X } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 
-export function Header() {
+export const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
   return (
     <header>
@@ -45,4 +45,4 @@ export function Header() {
       </div>
     </header>
   );
-}
+};

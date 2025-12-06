@@ -3,8 +3,6 @@ import { useState } from "react";
 import {
   Send,
   Upload,
-  Mic,
-  Plus,
   FileText,
   Building2,
   Landmark,
@@ -19,7 +17,7 @@ interface Message {
   text: string;
 }
 
-export function ChatPage() {
+export const ChatPage = () => {
   const [messages, setMessages] = useState<Message[]>([
     { from: "ai", text: "Xin chào! Tôi có thể giúp gì cho bạn?" },
     { from: "user", text: "Tôi muốn biết thủ tục đăng ký kinh doanh." },

@@ -10,7 +10,7 @@ interface Step {
   processingTime: string;
 }
 
-export function AddProcedure() {
+export const AddProcedure = () => {
   const [formData, setFormData] = useState({
     category: "",
     title: "",

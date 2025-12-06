@@ -12,7 +12,7 @@ interface Message {
   text: string;
 }
 
-export function MobileChat({ onNavigate }: MobileChatProps) {
+export const MobileChat = ({ onNavigate }: MobileChatProps) => {
   const [messages, setMessages] = useState<Message[]>([
     { from: "ai", text: "Xin chào! Tôi có thể giúp gì cho bạn?" },
   ]);

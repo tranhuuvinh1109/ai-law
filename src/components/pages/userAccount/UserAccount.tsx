@@ -1,10 +1,10 @@
 "use client";
 
 import { useApp } from "@/providers";
-import { User, Mail, Lock, Bell, History, Settings, ChevronLeft } from "lucide-react";
+import { User, Lock, Bell, History, Settings, ChevronLeft } from "lucide-react";
 import Link from "next/link";
 
-export function UserAccountPage() {
+export const UserAccountPage = () => {
   const { user } = useApp();
   const chatHistory = [
     { id: "1", title: "Đăng ký kinh doanh", date: "2025-11-20", messages: 12 },

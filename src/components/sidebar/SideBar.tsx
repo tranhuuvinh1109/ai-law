@@ -3,7 +3,7 @@
 import { Menu, X } from "lucide-react";
 import { useState } from "react";
 
-export function Sidebar() {
+export const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   const categories = [

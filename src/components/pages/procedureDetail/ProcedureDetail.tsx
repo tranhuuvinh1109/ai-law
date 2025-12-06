@@ -2,7 +2,7 @@ import { Download, FileText, AlertCircle, Clock, CheckCircle } from "lucide-reac
 import Link from "next/link";
 // import { useParams } from "next/navigation";
 
-export function ProcedureDetail() {
+export const ProcedureDetail = () => {
   // Mock data - in real app would fetch based on procedureId
   const procedure = {
     title: "Đăng ký kinh doanh",

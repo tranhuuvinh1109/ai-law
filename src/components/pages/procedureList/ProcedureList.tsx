@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Search, Filter, Clock } from "lucide-react";
+import { Search, Clock } from "lucide-react";
 import Link from "next/link";
 
 interface Procedure {
@@ -13,7 +13,7 @@ interface Procedure {
   level: string;
 }
 
-export function ProcedureList() {
+export const ProcedureList = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [selectedLevel, setSelectedLevel] = useState("all");

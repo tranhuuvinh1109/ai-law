@@ -10,10 +10,8 @@ import {
   Edit,
   Trash2,
   Plus,
-  Image,
   Type,
   Layout,
-  FileText,
   Save,
 } from "lucide-react";
 import {
@@ -34,7 +32,7 @@ interface AdminDashboardProps {
   onNavigate: (page: string) => void;
 }
 
-export function AdminDashboard({ onNavigate }: AdminDashboardProps) {
+export const AdminDashboard = ({ onNavigate }: AdminDashboardProps) => {
   const [activeTab, setActiveTab] = useState<
     "dashboard" | "chats" | "interface" | "procedures" | "posts"
   >("dashboard");
@@ -386,7 +384,6 @@ export function AdminDashboard({ onNavigate }: AdminDashboardProps) {
                 {/* Logo & Branding */}
                 <div className="rounded-lg border border-gray-200 p-6">
                   <div className="mb-4 flex items-center gap-2">
-                    <Image className="h-5 w-5 text-[#0A4FD5]" />
                     <h3 className="text-[#111827]">Logo & Branding</h3>
                   </div>
                   <div className="space-y-4">
@@ -651,4 +648,4 @@ export function AdminDashboard({ onNavigate }: AdminDashboardProps) {
       </div>
     </div>
   );
-}
+};

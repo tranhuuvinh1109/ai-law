@@ -1,6 +1,6 @@
 "use client";
 
-export function DocumentList() {
+export const DocumentList = () => {
   const documents = [
     {
       id: 1,

@@ -8,7 +8,7 @@ interface LoginProps {
   onLogin: (user: { email: string; name: string; role: "user" | "admin" }) => void;
 }
 
-export function Login({ onNavigate, onLogin }: LoginProps) {
+export const Login = ({ onNavigate, onLogin }: LoginProps) => {
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
