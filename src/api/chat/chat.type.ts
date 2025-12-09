@@ -18,3 +18,11 @@ export type AskAIPayloadType = {
 };
 export type AskAIResponseDataType = ChatMessageType;
 export type AskAIResponseType = ApiReponseType<AskAIResponseDataType>;
+
+export type UpdateConversationPayloadType = {
+  id: string;
+  user_id: string;
+  title: string;
+};
+export type UpdateConversationResponseDataType = ConversationItemType;
+export type UpdateConversationResponseType = ApiReponseType<UpdateConversationResponseDataType>;

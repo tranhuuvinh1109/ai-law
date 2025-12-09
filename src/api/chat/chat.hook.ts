@@ -5,6 +5,7 @@ import {
   createNewConversation,
   getAllConversations,
   getMessageByConversationId,
+  updateConversation,
 } from "./chat.api";
 
 export const useGetAllConversation = () => {
@@ -31,5 +32,11 @@ export const useGetMessageByConversationID = (id: string) => {
 export const useAskAI = () => {
   return useMutation({
     mutationFn: askAI,
+  });
+};
+
+export const useUpdateConversation = () => {
+  return useMutation({
+    mutationFn: updateConversation,
   });
 };

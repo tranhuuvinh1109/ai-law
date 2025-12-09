@@ -6,6 +6,8 @@ import {
   CreateNewConversationResponseDataType,
   GetAllConversationsResponseDataType,
   GetAllMessagesByConversationIDResponseDataType,
+  UpdateConversationPayloadType,
+  UpdateConversationResponseDataType,
 } from "./chat.type";
 
 export const getAllConversations = async () => {
@@ -46,6 +48,21 @@ export const askAI = async (payload: AskAIPayloadType) => {
     const response = await axiosClient.post<AskAIResponseDataType>(
       API_ROUTES.ASK_AI(payload.conversation_id),
       payload
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching conversations:", error);
+  }
+};
+
+export const updateConversation = async (payload: UpdateConversationPayloadType) => {
+  try {
+    const response = await axiosClient.put<UpdateConversationResponseDataType>(
+      API_ROUTES.UPDATE_CONVERSATION(payload.id),
+      {
+        title: payload.title,
+        user_id: payload.user_id,
+      }
     );
     return response.data;
   } catch (error) {
