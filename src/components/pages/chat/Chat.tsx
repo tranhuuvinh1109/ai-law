@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { use, useEffect, useState } from "react";
 import {
   Send,
   Upload,
@@ -9,8 +9,24 @@ import {
   Home as HomeIcon,
   ChevronDown,
   ChevronLeft,
+  MessageSquareText,
 } from "lucide-react";
+
+import { v4 as uuidv4 } from "uuid";
+
 import Link from "next/link";
+import {
+  useAskAI,
+  useCreateNewConversation,
+  useGetAllConversation,
+  useGetMessageByConversationID,
+} from "@/api";
+import { ConversationItemType } from "@/types/conversation.type";
+import dayjs from "dayjs";
+import { cn } from "@/lib/utils";
+import { ChatMessageType } from "@/types/chat.type";
+import { set } from "react-hook-form";
+import { useApp } from "@/providers";
 
 interface Message {
   from: "ai" | "user";
@@ -18,43 +34,78 @@ interface Message {
 }
 
 export const ChatPage = () => {
-  const [messages, setMessages] = useState<Message[]>([
-    { from: "ai", text: "Xin chào! Tôi có thể giúp gì cho bạn?" },
-    { from: "user", text: "Tôi muốn biết thủ tục đăng ký kinh doanh." },
-    {
-      from: "ai",
-      text: "Để đăng ký kinh doanh, bạn cần chuẩn bị các giấy tờ sau:\n\n1. CMND/CCCD (bản gốc và bản sao)\n2. Giấy chứng nhận đăng ký hộ kinh doanh (nếu có)\n3. Quyết định thành lập doanh nghiệp\n\nThời gian xử lý: 3-5 ngày làm việc.\n\nBạn có cần tôi hướng dẫn chi tiết từng bước không?",
-    },
-  ]);
+  const [conversationList, setConversationList] = useState<ConversationItemType[]>([]);
+  const [activedConversation, setActivedConversation] = useState<ConversationItemType | null>(null);
+  const { data: conversations, refetch } = useGetAllConversation();
+  const { mutate } = useCreateNewConversation();
+  const { data: messagesByConversationID } = useGetMessageByConversationID(
+    activedConversation?.id || ""
+  );
+  const { mutate: sendMessage } = useAskAI();
+  const { user } = useApp();
+
+  const [messages, setMessages] = useState<ChatMessageType[]>([]);
+  console.log("Messages by conversation ID:", messagesByConversationID);
+
   const [inputValue, setInputValue] = useState("");
   const [selectedModel, setSelectedModel] = useState<"govai" | "gpt4.5">("govai");
   const [showModelDropdown, setShowModelDropdown] = useState(false);
 
-  const handleSend = () => {
-    if (!inputValue.trim()) return;
-
-    setMessages([...messages, { from: "user", text: inputValue }]);
-    setInputValue("");
-
-    setTimeout(() => {
-      setMessages((prev) => [
-        ...prev,
-        {
-          from: "ai",
-          text: "Cảm ơn bạn đã hỏi. Tôi đang tìm hiểu thông tin và sẽ trả lời ngay...",
-        },
-      ]);
-    }, 500);
+  const handleCreateNewConversation = () => {
+    mutate(undefined, {
+      onSuccess: (data) => {
+        console.log("New conversation created:", data);
+        refetch();
+      },
+      onError: (error) => {
+        console.error("Failed to create new conversation:", error);
+      },
+    });
   };
 
-  const categories = [
-    { icon: HomeIcon, label: "Hộ tịch" },
-    { icon: Landmark, label: "Đất đai" },
-    { icon: Building2, label: "BHXH" },
-    { icon: FileText, label: "Giấy phép kinh doanh" },
-    { icon: FileText, label: "Thuế" },
-  ];
+  const handleSelectConversation = (conversation: ConversationItemType) => {
+    setActivedConversation(conversation);
+  };
 
+  const handleSendMessage = () => {
+    if (!inputValue.trim() || !activedConversation || !user) return;
+
+    const newMessage: ChatMessageType = {
+      id: uuidv4(),
+      conversation_id: activedConversation.id,
+      sender_id: user.id,
+      message: inputValue.trim(),
+      message_type: "text",
+      created_at: new Date().toISOString(),
+    };
+    setMessages((pre) => [...pre, newMessage]);
+
+    const payload = {
+      conversation_id: activedConversation.id,
+      message: inputValue,
+    };
+
+    sendMessage(payload, {
+      onSuccess: (data) => {
+        console.log("Message sent successfully:", data);
+        if (!data) return;
+        setMessages((pre) => [...pre, data]);
+        setInputValue("");
+      },
+      onError: (error) => {
+        console.error("Failed to send message:", error);
+      },
+    });
+  };
+
+  useEffect(() => {
+    if (conversations) {
+      setConversationList(conversations);
+    }
+    if (messagesByConversationID) {
+      setMessages(messagesByConversationID);
+    }
+  }, [conversations, messagesByConversationID]);
   return (
     <div className="flex h-screen bg-[#F3F4F6]">
       {/* Sidebar */}
@@ -73,7 +124,7 @@ export const ChatPage = () => {
           </div>
         </div>
 
-        <div className="mb-4 text-sm text-[#111827] opacity-70">Lĩnh vực phổ biến</div>
+        {/* <div className="mb-4 text-sm text-[#111827] opacity-70">Lĩnh vực phổ biến</div>
         <div className="flex-1 space-y-2">
           {categories.map((cat, i) => (
             <button
@@ -84,6 +135,33 @@ export const ChatPage = () => {
               <span className="text-[#111827]">{cat.label}</span>
             </button>
           ))}
+        </div> */}
+
+        <div className="mb-4 text-sm text-[#111827] opacity-70">Lịch sử chat</div>
+        <div className="flex-1 space-y-2">
+          <button onClick={handleCreateNewConversation}>Tạo mới cuộc trò chuyện</button>
+          <div>
+            {conversationList?.map((item) => {
+              return (
+                <div
+                  key={item.id}
+                  className={cn(
+                    "flex items-center justify-between",
+                    activedConversation?.id === item.id
+                      ? "rounded-lg bg-[#E0E7FF] p-2 text-[#0A4FD5]"
+                      : "cursor-pointer rounded-lg p-2 text-[#111827] hover:bg-[#F3F4F6]"
+                  )}
+                  onClick={() => handleSelectConversation(item)}
+                >
+                  <div className="flex flex-1 items-center gap-1">
+                    <MessageSquareText size={14} />
+                    <span>{item.title}</span>
+                  </div>
+                  <span>{dayjs(item.updated_at).format("HH:mm")}</span>
+                </div>
+              );
+            })}
+          </div>
         </div>
 
         <button className="mt-4 text-sm text-[#111827] opacity-70 transition-opacity hover:opacity-100">
@@ -160,22 +238,20 @@ export const ChatPage = () => {
         </div>
 
         <div className="flex-1 space-y-4 overflow-y-auto p-6">
-          {messages.map((msg, i) => (
-            <div
-              key={i}
-              className={`flex ${msg.from === "user" ? "justify-end" : "justify-start"}`}
-            >
+          {user &&
+            messages.map((msg) => (
               <div
-                className={`max-w-[70%] rounded-2xl p-4 ${
-                  msg.from === "user"
-                    ? "rounded-br-sm bg-[#0A4FD5] text-white"
-                    : "rounded-bl-sm bg-white text-[#111827] shadow-sm"
-                }`}
+                key={msg.id}
+                className={cn(
+                  "max-w-[70%] rounded-lg p-4",
+                  msg.sender_id?.toString() === user?.id?.toString()
+                    ? "ml-auto bg-[#0A4FD5] text-white"
+                    : "bg-white text-[#111827]"
+                )}
               >
-                <p className="whitespace-pre-wrap">{msg.text}</p>
+                {msg.message}
               </div>
-            </div>
-          ))}
+            ))}
         </div>
 
         <div className="border-t border-gray-200 bg-white p-4">
@@ -192,12 +268,12 @@ export const ChatPage = () => {
               type="text"
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
-              onKeyPress={(e) => e.key === "Enter" && handleSend()}
+              onKeyPress={(e) => e.key === "Enter" && handleSendMessage()}
               placeholder="Nhập câu hỏi..."
               className="flex-1 rounded-lg border border-gray-300 px-4 py-3 focus:border-[#0A4FD5] focus:outline-none"
             />
             <button
-              onClick={handleSend}
+              onClick={handleSendMessage}
               className="rounded-lg bg-[#0A4FD5] px-6 py-3 text-white transition-colors hover:bg-[#083aa3]"
             >
               <Send className="h-5 w-5" />
@@ -247,4 +323,4 @@ export const ChatPage = () => {
       </div>
     </div>
   );
-}
+};

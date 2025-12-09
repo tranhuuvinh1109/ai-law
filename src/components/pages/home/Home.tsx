@@ -1,14 +1,10 @@
+"use client";
+
 import { Header } from "@/components/header";
 import { MessageCircle, Search, Send, User } from "lucide-react";
 import Link from "next/link";
 
-interface HomeProps {
-  //   onNavigate: (page: string) => void;
-  user?: { email: string; name: string; role: "user" | "admin" } | null;
-}
-
-export const HomePage = ({ user }: HomeProps) => {
-  console.log("User on HomePage:", user);
+export const HomePage = () => {
   return (
     <div className="min-h-screen bg-[#F3F4F6]">
       {/* Hero Section */}
