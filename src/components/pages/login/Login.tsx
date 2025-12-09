@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useLogin, useRegister } from "@/api";
 import { E_LOCAL_STORAGE } from "@/enum";
+import { set } from "react-hook-form";
 
 export const Login = () => {
   const { setUser } = useApp();
@@ -43,6 +44,8 @@ export const Login = () => {
                 access_token: data?.access_token,
               })
             );
+            setUser(data?.user);
+            router.push("/");
           },
         }
       );
@@ -169,7 +172,7 @@ export const Login = () => {
 
             <button
               type="submit"
-              className="w-full rounded-lg bg-[#0A4FD5] py-3 text-white transition-colors hover:bg-[#083aa3]"
+              className="w-full rounded-lg bg-[#0A4FD5] py-3 text-white transition-colors hover:cursor-pointer hover:bg-[#083aa3]"
             >
               {isLogin ? "Đăng nhập" : "Đăng ký"}
             </button>

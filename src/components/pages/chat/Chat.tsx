@@ -1,5 +1,5 @@
 "use client";
-import { use, useEffect, useState } from "react";
+import { use, useEffect, useRef, useState } from "react";
 import {
   Send,
   Upload,
@@ -12,6 +12,8 @@ import {
   MessageSquareText,
 } from "lucide-react";
 
+import Markdown from "react-markdown";
+
 import { v4 as uuidv4 } from "uuid";
 
 import Link from "next/link";
@@ -20,6 +22,7 @@ import {
   useCreateNewConversation,
   useGetAllConversation,
   useGetMessageByConversationID,
+  useUpdateConversation,
 } from "@/api";
 import { ConversationItemType } from "@/types/conversation.type";
 import dayjs from "dayjs";
@@ -27,6 +30,8 @@ import { cn } from "@/lib/utils";
 import { ChatMessageType } from "@/types/chat.type";
 import { set } from "react-hook-form";
 import { useApp } from "@/providers";
+import { useParams } from "next/navigation";
+import { Thinking } from "@/components/ui";
 
 interface Message {
   from: "ai" | "user";
@@ -34,6 +39,8 @@ interface Message {
 }
 
 export const ChatPage = () => {
+  const { id: conversationId } = useParams();
+
   const [conversationList, setConversationList] = useState<ConversationItemType[]>([]);
   const [activedConversation, setActivedConversation] = useState<ConversationItemType | null>(null);
   const { data: conversations, refetch } = useGetAllConversation();
@@ -41,11 +48,21 @@ export const ChatPage = () => {
   const { data: messagesByConversationID } = useGetMessageByConversationID(
     activedConversation?.id || ""
   );
-  const { mutate: sendMessage } = useAskAI();
+
+  const { mutate: updateConversationMutation, isPending: isUpdatingConversation } =
+    useUpdateConversation();
+  const { mutate: sendMessage, isPending: isSendingMessage } = useAskAI();
   const { user } = useApp();
 
   const [messages, setMessages] = useState<ChatMessageType[]>([]);
-  console.log("Messages by conversation ID:", messagesByConversationID);
+
+  const bottomRef = useRef<HTMLDivElement>(null);
+
+  const scrollToBottom = () => {
+    if (bottomRef.current) {
+      bottomRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  };
 
   const [inputValue, setInputValue] = useState("");
   const [selectedModel, setSelectedModel] = useState<"govai" | "gpt4.5">("govai");
@@ -54,7 +71,6 @@ export const ChatPage = () => {
   const handleCreateNewConversation = () => {
     mutate(undefined, {
       onSuccess: (data) => {
-        console.log("New conversation created:", data);
         refetch();
       },
       onError: (error) => {
@@ -80,6 +96,8 @@ export const ChatPage = () => {
     };
     setMessages((pre) => [...pre, newMessage]);
 
+    setInputValue("");
+    scrollToBottom();
     const payload = {
       conversation_id: activedConversation.id,
       message: inputValue,
@@ -87,15 +105,40 @@ export const ChatPage = () => {
 
     sendMessage(payload, {
       onSuccess: (data) => {
-        console.log("Message sent successfully:", data);
         if (!data) return;
         setMessages((pre) => [...pre, data]);
-        setInputValue("");
+        if (activedConversation.title === "Untitled") {
+          updateConversationMutation(
+            {
+              id: activedConversation.id,
+              title: inputValue.trim(),
+              user_id: user.id,
+            },
+            {
+              onSuccess: () => {
+                setActivedConversation((pre) =>
+                  pre ? { ...pre, title: inputValue.trim() } : null
+                );
+                setConversationList((pre) =>
+                  pre.map((item) =>
+                    item.id === activedConversation.id
+                      ? { ...item, title: inputValue.trim() }
+                      : item
+                  )
+                );
+              },
+            }
+          );
+        }
       },
       onError: (error) => {
         console.error("Failed to send message:", error);
       },
     });
+
+    setTimeout(() => {
+      scrollToBottom();
+    }, 500);
   };
 
   useEffect(() => {
@@ -104,8 +147,21 @@ export const ChatPage = () => {
     }
     if (messagesByConversationID) {
       setMessages(messagesByConversationID);
+      setTimeout(() => {
+        scrollToBottom();
+      }, 500);
     }
   }, [conversations, messagesByConversationID]);
+
+  useEffect(() => {
+    if (conversationId) {
+      const conversation = conversationList.find((item) => item.id === conversationId);
+      if (conversation) {
+        handleSelectConversation(conversation);
+      }
+    }
+  }, [conversationId, conversationList]);
+
   return (
     <div className="flex h-screen bg-[#F3F4F6]">
       {/* Sidebar */}
@@ -124,41 +180,29 @@ export const ChatPage = () => {
           </div>
         </div>
 
-        {/* <div className="mb-4 text-sm text-[#111827] opacity-70">Lĩnh vực phổ biến</div>
-        <div className="flex-1 space-y-2">
-          {categories.map((cat, i) => (
-            <button
-              key={i}
-              className="flex w-full items-center gap-3 rounded-lg p-3 text-left transition-colors hover:bg-[#F3F4F6]"
-            >
-              <cat.icon className="h-5 w-5 text-[#0A4FD5]" />
-              <span className="text-[#111827]">{cat.label}</span>
-            </button>
-          ))}
-        </div> */}
-
         <div className="mb-4 text-sm text-[#111827] opacity-70">Lịch sử chat</div>
         <div className="flex-1 space-y-2">
           <button onClick={handleCreateNewConversation}>Tạo mới cuộc trò chuyện</button>
           <div>
             {conversationList?.map((item) => {
               return (
-                <div
+                <Link
+                  href={`/chat/${item.id}`}
                   key={item.id}
                   className={cn(
-                    "flex items-center justify-between",
+                    "flex w-full items-center justify-between gap-2",
                     activedConversation?.id === item.id
                       ? "rounded-lg bg-[#E0E7FF] p-2 text-[#0A4FD5]"
                       : "cursor-pointer rounded-lg p-2 text-[#111827] hover:bg-[#F3F4F6]"
                   )}
                   onClick={() => handleSelectConversation(item)}
                 >
-                  <div className="flex flex-1 items-center gap-1">
+                  <div className="flex max-w-[70%] flex-1 items-center gap-1">
                     <MessageSquareText size={14} />
-                    <span>{item.title}</span>
+                    <span className="truncate">{item.title}</span>
                   </div>
-                  <span>{dayjs(item.updated_at).format("HH:mm")}</span>
-                </div>
+                  <span className="text-xs">{dayjs(item.updated_at).format("HH:mm")}</span>
+                </Link>
               );
             })}
           </div>
@@ -170,157 +214,7 @@ export const ChatPage = () => {
       </div>
 
       {/* Chat Area */}
-      <div className="flex flex-1 flex-col">
-        <div className="flex items-center justify-between border-b border-gray-200 bg-white p-4">
-          <div className="flex items-center gap-4">
-            <h2 className="text-[#111827]">Trò chuyện với AI</h2>
-
-            {/* AI Model Selector */}
-            <div className="relative">
-              <button
-                onClick={() => setShowModelDropdown(!showModelDropdown)}
-                className="flex items-center gap-2 rounded-lg bg-[#F3F4F6] px-4 py-2 transition-colors hover:bg-gray-200"
-              >
-                <div className="h-2 w-2 rounded-full bg-[#3DDC84]"></div>
-                <span className="text-sm text-[#111827]">
-                  {selectedModel === "govai" ? "GovAI" : "GPT-4.5"}
-                </span>
-                <ChevronDown className="h-4 w-4 text-[#111827] opacity-70" />
-              </button>
-
-              {showModelDropdown && (
-                <div className="absolute top-full left-0 z-10 mt-2 w-48 rounded-lg border border-gray-200 bg-white py-2 shadow-lg">
-                  <button
-                    onClick={() => {
-                      setSelectedModel("govai");
-                      setShowModelDropdown(false);
-                    }}
-                    className={`w-full px-4 py-2 text-left transition-colors hover:bg-[#F3F4F6] ${
-                      selectedModel === "govai"
-                        ? "bg-[#0A4FD5]/10 text-[#0A4FD5]"
-                        : "text-[#111827]"
-                    }`}
-                  >
-                    <div className="flex items-center gap-2">
-                      <div className="h-2 w-2 rounded-full bg-[#3DDC84]"></div>
-                      <div>
-                        <div className="text-sm">GovAI</div>
-                        <div className="text-xs opacity-70">Chuyên về thủ tục hành chính</div>
-                      </div>
-                    </div>
-                  </button>
-                  <button
-                    onClick={() => {
-                      setSelectedModel("gpt4.5");
-                      setShowModelDropdown(false);
-                    }}
-                    className={`w-full px-4 py-2 text-left transition-colors hover:bg-[#F3F4F6] ${
-                      selectedModel === "gpt4.5"
-                        ? "bg-[#0A4FD5]/10 text-[#0A4FD5]"
-                        : "text-[#111827]"
-                    }`}
-                  >
-                    <div className="flex items-center gap-2">
-                      <div className="h-2 w-2 rounded-full bg-purple-500"></div>
-                      <div>
-                        <div className="text-sm">GPT-4.5</div>
-                        <div className="text-xs opacity-70">Model AI đa năng</div>
-                      </div>
-                    </div>
-                  </button>
-                </div>
-              )}
-            </div>
-          </div>
-          <Link href={"/"} className="text-sm text-[#0A4FD5] hover:underline">
-            Xem danh sách thủ tục
-          </Link>
-        </div>
-
-        <div className="flex-1 space-y-4 overflow-y-auto p-6">
-          {user &&
-            messages.map((msg) => (
-              <div
-                key={msg.id}
-                className={cn(
-                  "max-w-[70%] rounded-lg p-4",
-                  msg.sender_id?.toString() === user?.id?.toString()
-                    ? "ml-auto bg-[#0A4FD5] text-white"
-                    : "bg-white text-[#111827]"
-                )}
-              >
-                {msg.message}
-              </div>
-            ))}
-        </div>
-
-        <div className="border-t border-gray-200 bg-white p-4">
-          <div className="mb-3 flex gap-2">
-            <button
-              className="rounded-lg p-2 transition-colors hover:bg-[#F3F4F6]"
-              title="Upload file"
-            >
-              <Upload className="h-5 w-5 text-[#111827] opacity-70" />
-            </button>
-          </div>
-          <div className="flex gap-2">
-            <input
-              type="text"
-              value={inputValue}
-              onChange={(e) => setInputValue(e.target.value)}
-              onKeyPress={(e) => e.key === "Enter" && handleSendMessage()}
-              placeholder="Nhập câu hỏi..."
-              className="flex-1 rounded-lg border border-gray-300 px-4 py-3 focus:border-[#0A4FD5] focus:outline-none"
-            />
-            <button
-              onClick={handleSendMessage}
-              className="rounded-lg bg-[#0A4FD5] px-6 py-3 text-white transition-colors hover:bg-[#083aa3]"
-            >
-              <Send className="h-5 w-5" />
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Info Panel */}
-      <div className="w-[284px] overflow-y-auto border-l border-gray-200 bg-white p-6">
-        <div className="mb-6">
-          <h3 className="mb-3 text-[#111827]">Tóm tắt thủ tục</h3>
-          <div className="text-sm text-[#111827] opacity-70">
-            <p className="mb-2">
-              Đăng ký kinh doanh là thủ tục bắt buộc để thành lập doanh nghiệp mới.
-            </p>
-            <p>Được thực hiện tại Phòng Đăng ký kinh doanh cấp Tỉnh/Thành phố.</p>
-          </div>
-        </div>
-
-        <div className="mb-6">
-          <h3 className="mb-3 text-[#111827]">Giấy tờ cần chuẩn bị</h3>
-          <ul className="space-y-2 text-sm text-[#111827] opacity-70">
-            <li className="flex gap-2">
-              <span>•</span>
-              <span>CMND/CCCD (bản gốc)</span>
-            </li>
-            <li className="flex gap-2">
-              <span>•</span>
-              <span>Giấy tờ thành lập</span>
-            </li>
-            <li className="flex gap-2">
-              <span>•</span>
-              <span>Hợp đồng thuê địa điểm</span>
-            </li>
-          </ul>
-        </div>
-
-        <div className="mb-6">
-          <h3 className="mb-3 text-[#111827]">Thời gian xử lý</h3>
-          <div className="rounded-lg bg-[#3DDC84]/10 p-3">
-            <div className="text-[#111827]">3-5 ngày làm việc</div>
-          </div>
-        </div>
-
-        <Link href={"/thu-tuc/dang-ky-kinh-doanh"}>Xem chi tiết thủ tục</Link>
-      </div>
+      <div className="flex flex-1 flex-col"></div>
     </div>
   );
 };

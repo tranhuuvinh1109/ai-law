@@ -49,10 +49,10 @@ export const UserAccountPage = () => {
             <div className="rounded-xl bg-white p-6 shadow-sm">
               <div className="mb-6 flex items-center gap-4">
                 <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-[#0A4FD5] to-[#3DDC84] text-2xl text-white">
-                  {user?.name?.charAt(0) || "U"}
+                  {user?.username?.charAt(0) || "U"}
                 </div>
                 <div>
-                  <h3 className="text-[#111827]">{user?.name || "Người dùng"}</h3>
+                  <h3 className="text-[#111827]">{user?.username || "Người dùng"}</h3>
                   <div className="text-sm text-[#111827] opacity-70">
                     {user?.email || "user@example.com"}
                   </div>
@@ -174,4 +174,4 @@ export const UserAccountPage = () => {
       </div>
     </div>
   );
-}
+};
