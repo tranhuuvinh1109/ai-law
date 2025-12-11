@@ -1,19 +1,39 @@
 "use client";
 
-import { Header } from "@/components/header";
+import { useCreateNewConversation } from "@/api";
+import { useApp } from "@/providers";
 import { MessageCircle, Search, Send, User } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 export const HomePage = () => {
+  const router = useRouter();
+  const { refetchConversationList } = useApp();
+  const [message, setMessage] = useState("");
+
+  const { mutate: createNewConversationMutation } = useCreateNewConversation();
+
+  const handleChatNow = () => {
+    if (!message.trim()) return;
+
+    createNewConversationMutation(undefined, {
+      onSuccess: (data) => {
+        const basePath = `/chat/${data?.id}`;
+
+        const queryString = message.trim() ? `?${new URLSearchParams({ message }).toString()}` : "";
+
+        router.push(`${basePath}${queryString}`);
+        refetchConversationList();
+      },
+      onError: (error) => {
+        console.error("Failed to create new conversation:", error);
+      },
+    });
+  };
+
   return (
     <div className="min-h-screen bg-[#F3F4F6]">
-      {/* Hero Section */}
-      <div className="bg-white shadow-sm">
-        <div className="mx-auto max-w-[1440px] px-8 py-6">
-          <Header />
-        </div>
-      </div>
-
       {/* Hero Content */}
       <div className="mx-auto px-4 py-8 md:max-w-[1440px] md:px-8 md:py-16">
         <div className="flex w-full flex-col items-center justify-between gap-12 md:flex-row">
@@ -25,12 +45,14 @@ export const HomePage = () => {
             <div className="flex flex-wrap gap-4">
               <input
                 type="text"
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
                 placeholder="Ví dụ: Thủ tục đăng ký kinh doanh cần gì?"
                 className="flex-1 rounded-lg border border-gray-300 bg-white px-6 py-4 focus:border-[#0A4FD5] focus:outline-none"
               />
               <button
-                // onClick={() => onNavigate("chat")}
                 className="flex items-center gap-2 rounded-lg bg-[#3DDC84] px-8 py-4 text-[#111827] transition-colors hover:bg-[#2ac972]"
+                onClick={handleChatNow}
               >
                 <Send className="h-5 w-5" />
                 Trò chuyện ngay

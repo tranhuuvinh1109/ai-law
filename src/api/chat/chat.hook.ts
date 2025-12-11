@@ -12,6 +12,8 @@ export const useGetAllConversation = () => {
   return useQuery({
     queryKey: [QUERY_KEYS.GET_ALL_CONVERSATIONS],
     queryFn: getAllConversations,
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
   });
 };
 

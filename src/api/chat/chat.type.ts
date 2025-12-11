@@ -5,7 +5,9 @@ import { ChatMessageType } from "@/types/chat.type";
 export type GetAllConversationsResponseDataType = ConversationItemType[];
 export type GetAllConversationsResponseType = ApiReponseType<GetAllConversationsResponseDataType>;
 
-export type CreateNewConversationResponseDataType = ConversationItemType;
+export type CreateNewConversationResponseDataType = { data: ConversationItemType };
+export type CreateNewConversationResponseType =
+  ApiReponseType<CreateNewConversationResponseDataType>;
 
 export type GetAllMessagesByConversationIDResponseDataType = ChatMessageType[];
 export type GetAllMessagesByConversationIDResponseType =

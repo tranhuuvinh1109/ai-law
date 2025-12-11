@@ -10,6 +10,10 @@ export const HEADERS: HeaderItemType[] = [
     label: "Thủ tục",
   },
   {
+    href: "/chat",
+    label: "Chat",
+  },
+  {
     href: "/ho-tro",
     label: "Hỗ trợ",
   },

@@ -4,6 +4,7 @@ import {
   GetUserInfoDataType,
   LoginPayloadType,
   LoginReponseDataType,
+  RegisterGuestTokenDataType,
   RegisterPayloadType,
 } from "./user.type";
 
@@ -31,5 +32,14 @@ export const register = async (payload: RegisterPayloadType) => {
     return response.data;
   } catch (error) {
     console.error("Error fetching user info:", error);
+  }
+};
+
+export const registerGuestToken = async () => {
+  try {
+    const response = await axiosClient.post<RegisterGuestTokenDataType>(API_ROUTES.GUEST);
+    return response.data;
+  } catch (error) {
+    console.error("Error creating guest info:", error);
   }
 };

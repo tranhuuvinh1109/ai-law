@@ -4,6 +4,7 @@ import {
   AskAIPayloadType,
   AskAIResponseDataType,
   CreateNewConversationResponseDataType,
+  CreateNewConversationResponseType,
   GetAllConversationsResponseDataType,
   GetAllMessagesByConversationIDResponseDataType,
   UpdateConversationPayloadType,
@@ -23,9 +24,8 @@ export const getAllConversations = async () => {
 
 export const createNewConversation = async () => {
   try {
-    const response = await axiosClient.post<CreateNewConversationResponseDataType>(
-      API_ROUTES.CREATE_NEW_CONVERSATION
-    );
+    const response = await axiosClient.post(API_ROUTES.CREATE_NEW_CONVERSATION);
+    console.log("Create new conversation response:", response);
     return response.data;
   } catch (error) {
     console.error("Error fetching conversations:", error);

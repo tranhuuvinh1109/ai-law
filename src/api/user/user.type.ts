@@ -22,3 +22,8 @@ export type LoginReponseType = ApiReponseType<LoginReponseDataType>;
 
 export type GetUserInfoDataType = UserInfoType;
 export type GetUserInfoReponseType = ApiReponseType<GetUserInfoDataType>;
+
+export type RegisterGuestTokenDataType = {
+  data: UserInfoType;
+};
+export type RegisterGuestTokenReponseType = ApiReponseType<RegisterGuestTokenDataType>;
