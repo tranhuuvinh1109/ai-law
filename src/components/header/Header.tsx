@@ -19,18 +19,20 @@ export const Header = () => {
   const router = useRouter();
   const pathname = usePathname();
 
-  console.log("pathname:", pathname);
   const handleLogout = () => {
     setUser(undefined);
     localStorage.removeItem(E_LOCAL_STORAGE.APP_NAME);
     router.replace("/dang-nhap");
   };
+
+  const hideHeaderPaths = ["/dang-nhap", "/dang-ky", "/chat"];
+  const shouldHideHeader = hideHeaderPaths.some((p) => pathname.startsWith(p));
   return (
     <>
       <header
         className={cn(
           "fixed top-0 right-0 left-0 z-50 mx-auto flex w-full justify-end bg-white px-4 py-4 shadow-sm md:block md:px-8",
-          pathname === "/dang-nhap" || pathname === "/dang-ky" ? "relative hidden md:hidden" : ""
+          shouldHideHeader ? "relative hidden md:hidden" : ""
         )}
       >
         <div className="hidden items-center gap-4 md:flex">
