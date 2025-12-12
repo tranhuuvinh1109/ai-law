@@ -13,7 +13,7 @@ import { useGetAllConversation, useGetUserInfo, useRegisterGuestToken } from "@/
 import { UserInfoType } from "@/types/user.type";
 import { E_LOCAL_STORAGE } from "@/enum";
 import { ConversationItemType } from "@/types/conversation.type";
-import { Header } from "@/components";
+// import { Header } from "@/components";
 
 interface AppContextProps {
   user: UserInfoType | undefined;
@@ -77,7 +77,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     <AppContext.Provider
       value={{ user, setUser, conversations, setConversations, refetchConversationList }}
     >
-      <Header />
+      {/* <Header /> */}
       {children}
     </AppContext.Provider>
   );
