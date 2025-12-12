@@ -4,15 +4,20 @@ import { useState } from "react";
 import {
   Users,
   MessageSquare,
+  FileText,
+  DollarSign,
+  ArrowUpRight,
+  Settings,
+  Plus,
+  Wallet,
   ThumbsUp,
   CheckCircle,
-  TrendingUp,
+  Save,
+  Image,
+  Layout,
+  Type,
   Edit,
   Trash2,
-  Plus,
-  Type,
-  Layout,
-  Save,
 } from "lucide-react";
 import {
   LineChart,
@@ -27,14 +32,11 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
+import Link from "next/link";
 
-interface AdminDashboardProps {
-  onNavigate: (page: string) => void;
-}
-
-export const AdminDashboard = ({ onNavigate }: AdminDashboardProps) => {
+export function AdminDashboard() {
   const [activeTab, setActiveTab] = useState<
-    "dashboard" | "chats" | "interface" | "procedures" | "posts"
+    "dashboard" | "chats" | "interface" | "procedures" | "posts" | "recharge"
   >("dashboard");
 
   const stats = [
@@ -159,15 +161,15 @@ export const AdminDashboard = ({ onNavigate }: AdminDashboardProps) => {
       <div className="border-b border-gray-200 bg-white">
         <div className="mx-auto max-w-[1400px] px-8 py-6">
           <div className="mb-4 flex items-center justify-between">
-            <button onClick={() => onNavigate("home")} className="text-[#0A4FD5] hover:underline">
+            <Link href={"/"} className="text-[#0A4FD5] hover:underline">
               ← Trang chủ
-            </button>
-            <button
-              onClick={() => onNavigate("login")}
+            </Link>
+            <Link
+              href={"/dang-nhap"}
               className="text-sm text-red-600 transition-colors hover:text-red-700"
             >
               Đăng xuất
-            </button>
+            </Link>
           </div>
           <h1 className="mb-4 text-[#111827]">Quản trị hệ thống</h1>
 
@@ -223,6 +225,16 @@ export const AdminDashboard = ({ onNavigate }: AdminDashboardProps) => {
             >
               Đăng Bài viết
             </button>
+            <button
+              onClick={() => setActiveTab("recharge")}
+              className={`rounded-lg px-4 py-2 whitespace-nowrap transition-colors ${
+                activeTab === "recharge"
+                  ? "bg-[#0A4FD5] text-white"
+                  : "text-[#111827] hover:bg-[#F3F4F6]"
+              }`}
+            >
+              Nạp tiền
+            </button>
           </div>
         </div>
       </div>
@@ -232,17 +244,107 @@ export const AdminDashboard = ({ onNavigate }: AdminDashboardProps) => {
         {activeTab === "dashboard" && (
           <>
             {/* Stats */}
-            <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-4">
-              {stats.map((stat, index) => (
-                <div key={index} className="rounded-xl bg-white p-6 shadow-sm">
-                  <div className="mb-3 flex items-center justify-between">
-                    <stat.icon className={`h-10 w-10 ${stat.color}`} />
-                    <TrendingUp className="h-5 w-5 text-green-600" />
+            <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
+              <div className="rounded-xl bg-white p-6 shadow-sm transition-shadow hover:shadow-lg">
+                <div className="mb-4 flex items-center justify-between">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-[#0A4FD5]/10">
+                    <Users className="h-6 w-6 text-[#0A4FD5]" />
                   </div>
-                  <div className="mb-1 text-3xl text-[#111827]">{stat.value}</div>
-                  <div className="text-sm text-[#111827] opacity-70">{stat.label}</div>
+                  <span className="flex items-center gap-1 text-sm text-green-600">
+                    <ArrowUpRight className="h-4 w-4" />
+                    12%
+                  </span>
                 </div>
-              ))}
+                <div className="mb-1 text-3xl text-[#111827]">1,234</div>
+                <div className="text-sm text-[#111827] opacity-70">Người dùng</div>
+              </div>
+
+              <div className="rounded-xl bg-white p-6 shadow-sm transition-shadow hover:shadow-lg">
+                <div className="mb-4 flex items-center justify-between">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-[#3DDC84]/10">
+                    <MessageSquare className="h-6 w-6 text-[#3DDC84]" />
+                  </div>
+                  <span className="flex items-center gap-1 text-sm text-green-600">
+                    <ArrowUpRight className="h-4 w-4" />
+                    8%
+                  </span>
+                </div>
+                <div className="mb-1 text-3xl text-[#111827]">5,678</div>
+                <div className="text-sm text-[#111827] opacity-70">Cuộc trò chuyện</div>
+              </div>
+
+              <div className="rounded-xl bg-white p-6 shadow-sm transition-shadow hover:shadow-lg">
+                <div className="mb-4 flex items-center justify-between">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-purple-500/10">
+                    <FileText className="h-6 w-6 text-purple-500" />
+                  </div>
+                  <span className="flex items-center gap-1 text-sm text-green-600">
+                    <ArrowUpRight className="h-4 w-4" />
+                    15%
+                  </span>
+                </div>
+                <div className="mb-1 text-3xl text-[#111827]">432</div>
+                <div className="text-sm text-[#111827] opacity-70">Thủ tục</div>
+              </div>
+
+              <div className="rounded-xl bg-white p-6 shadow-sm transition-shadow hover:shadow-lg">
+                <div className="mb-4 flex items-center justify-between">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-orange-500/10">
+                    <DollarSign className="h-6 w-6 text-orange-500" />
+                  </div>
+                  <span className="flex items-center gap-1 text-sm text-green-600">
+                    <ArrowUpRight className="h-4 w-4" />
+                    25%
+                  </span>
+                </div>
+                <div className="mb-1 text-3xl text-[#111827]">45M</div>
+                <div className="text-sm text-[#111827] opacity-70">Doanh thu (VNĐ)</div>
+              </div>
+            </div>
+
+            {/* Quick Actions */}
+            <div className="mb-8 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+              <Link
+                href={"/thu-tuc"}
+                className="group rounded-xl bg-white p-6 text-left shadow-sm transition-all hover:shadow-lg"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-[#0A4FD5]/10 transition-transform group-hover:scale-110">
+                    <Plus className="h-6 w-6 text-[#0A4FD5]" />
+                  </div>
+                  <div>
+                    <div className="mb-1 text-[#111827]">Thêm thủ tục</div>
+                    <div className="text-sm text-[#111827] opacity-60">Tạo thủ tục mới</div>
+                  </div>
+                </div>
+              </Link>
+
+              <Link
+                href={"/"}
+                className="group rounded-xl bg-white p-6 text-left shadow-sm transition-all hover:shadow-lg"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-[#3DDC84]/10 transition-transform group-hover:scale-110">
+                    <Wallet className="h-6 w-6 text-[#3DDC84]" />
+                  </div>
+                  <div>
+                    <div className="mb-1 text-[#111827]">Nạp tiền</div>
+                    <div className="text-sm text-[#111827] opacity-60">Quản lý nạp tiền</div>
+                  </div>
+                </div>
+              </Link>
+
+              <button className="group rounded-xl bg-white p-6 text-left shadow-sm transition-all hover:shadow-lg">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-orange-500/10 transition-transform group-hover:scale-110">
+                    <Settings className="h-6 w-6 text-orange-500" />
+                  </div>
+                  <div>
+                    <div className="mb-1 text-[#111827]">Cài đặt</div>
+                    <div className="text-sm text-[#111827] opacity-60">Cấu hình hệ thống</div>
+                  </div>
+                </div>
+              </button>
             </div>
 
             <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
@@ -384,6 +486,7 @@ export const AdminDashboard = ({ onNavigate }: AdminDashboardProps) => {
                 {/* Logo & Branding */}
                 <div className="rounded-lg border border-gray-200 p-6">
                   <div className="mb-4 flex items-center gap-2">
+                    <Image className="h-5 w-5 text-[#0A4FD5]" />
                     <h3 className="text-[#111827]">Logo & Branding</h3>
                   </div>
                   <div className="space-y-4">
@@ -527,13 +630,13 @@ export const AdminDashboard = ({ onNavigate }: AdminDashboardProps) => {
           <div className="overflow-hidden rounded-xl bg-white shadow-sm">
             <div className="flex items-center justify-between border-b border-gray-200 p-6">
               <h2 className="text-[#111827]">Quản lý Thủ tục Phổ biến</h2>
-              <button
-                onClick={() => onNavigate("procedures")}
+              <Link
+                href={"/thu-tuc"}
                 className="flex items-center gap-2 rounded-lg bg-[#0A4FD5] px-6 py-2 text-white transition-colors hover:bg-[#083aa3]"
               >
                 <Plus className="h-5 w-5" />
                 Thêm thủ tục
-              </button>
+              </Link>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full">
@@ -645,7 +748,25 @@ export const AdminDashboard = ({ onNavigate }: AdminDashboardProps) => {
             </div>
           </div>
         )}
+
+        {/* Recharge Tab */}
+        {activeTab === "recharge" && (
+          <div className="rounded-xl bg-white p-8 text-center shadow-sm">
+            <Wallet className="mx-auto mb-4 h-16 w-16 text-[#0A4FD5]" />
+            <h2 className="mb-2 text-[#111827]">Quản lý Nạp tiền</h2>
+            <p className="mb-6 text-[#111827] opacity-70">
+              Theo dõi và quản lý các giao dịch nạp tiền của người dùng
+            </p>
+            <Link
+              href={"/"}
+              className="inline-flex items-center gap-2 rounded-lg bg-[#0A4FD5] px-8 py-3 text-white transition-colors hover:bg-[#083aa3]"
+            >
+              <Wallet className="h-5 w-5" />
+              Mở trang quản lý nạp tiền
+            </Link>
+          </div>
+        )}
       </div>
     </div>
   );
-};
+}

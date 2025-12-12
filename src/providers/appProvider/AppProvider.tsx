@@ -79,12 +79,15 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     });
   }, []);
 
+  const hideHeaderPaths = ["/chat", "/admin"];
+  const shouldHideHeader = hideHeaderPaths.some((p) => pathname.startsWith(p));
+
   return (
     <AppContext.Provider
       value={{ user, setUser, conversations, setConversations, refetchConversationList }}
     >
       <Header />
-      <div className={cn("pt-[100px]", pathname.includes("chat") && "pt-0")}>{children}</div>
+      <div className={cn("pt-[100px]", shouldHideHeader && "pt-0")}>{children}</div>
     </AppContext.Provider>
   );
 };

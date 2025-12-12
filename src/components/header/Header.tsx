@@ -34,7 +34,7 @@ export const Header = () => {
     setConversations([]);
     router.replace("/dang-nhap");
   };
-  const hideHeaderPaths = ["/dang-nhap", "/dang-ky"];
+  const hideHeaderPaths = ["/dang-nhap", "/dang-ky", "/admin"];
   const shouldHideHeader = hideHeaderPaths.some((p) => pathname.startsWith(p));
   return (
     <>
