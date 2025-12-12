@@ -1,6 +1,5 @@
 "use client";
 
-import { useCreateNewConversation } from "@/api";
 import { SLIDES } from "@/constants";
 import { useApp } from "@/providers";
 import {
@@ -8,8 +7,6 @@ import {
   Calendar,
   CheckCircle,
   Clock,
-  LogOut,
-  Menu,
   MessageCircle,
   Search,
   Send,
@@ -22,31 +19,8 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export const HomePage = () => {
-  const router = useRouter();
-  const { refetchConversationList, user } = useApp();
-  const [message, setMessage] = useState("");
+  const { user } = useApp();
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
-  const { mutate: createNewConversationMutation } = useCreateNewConversation();
-
-  const handleChatNow = () => {
-    if (!message.trim()) return;
-
-    createNewConversationMutation(undefined, {
-      onSuccess: (data) => {
-        const basePath = `/chat/${data?.id}`;
-
-        const queryString = message.trim() ? `?${new URLSearchParams({ message }).toString()}` : "";
-
-        router.push(`${basePath}${queryString}`);
-        refetchConversationList();
-      },
-      onError: (error) => {
-        console.error("Failed to create new conversation:", error);
-      },
-    });
-  };
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -59,156 +33,9 @@ export const HomePage = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-white via-[#F3F4F6] to-white">
       {/* Hero Section */}
-      <div className="sticky top-0 z-50 bg-white bg-white/90 shadow-sm backdrop-blur-sm">
-        <div className="mx-auto max-w-[1440px] px-4 py-4 md:px-8">
-          {/* Navigation */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-8 md:gap-12">
-              <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-[#0A4FD5] to-[#3DDC84]">
-                  <Sparkles className="h-6 w-6 text-white" />
-                </div>
-                <div>
-                  <div className="font-semibold text-[#0A4FD5]">GovAssist AI</div>
-                  <div className="hidden text-xs text-[#111827] opacity-60 md:block">
-                    Hỗ trợ thủ tục hành chính
-                  </div>
-                </div>
-              </div>
-              <nav className="hidden gap-8 lg:flex">
-                <button className="group relative text-[#111827] transition-colors hover:text-[#0A4FD5]">
-                  Trang chủ
-                  <div className="absolute bottom-0 left-0 h-0.5 w-full scale-x-100 transform bg-[#0A4FD5] transition-transform"></div>
-                </button>
-                <Link
-                  href={"/thu-tuc"}
-                  className="group relative text-[#111827] transition-colors hover:text-[#0A4FD5]"
-                >
-                  Thủ tục
-                  <div className="absolute bottom-0 left-0 h-0.5 w-full scale-x-0 transform bg-[#0A4FD5] transition-transform group-hover:scale-x-100"></div>
-                </Link>
-                <button className="group relative text-[#111827] transition-colors hover:text-[#0A4FD5]">
-                  Hướng dẫn
-                  <div className="absolute bottom-0 left-0 h-0.5 w-full scale-x-0 transform bg-[#0A4FD5] transition-transform group-hover:scale-x-100"></div>
-                </button>
-                {user?.role === 1 && (
-                  <Link
-                    href={"/admin"}
-                    className="group relative text-[#111827] transition-colors hover:text-[#0A4FD5]"
-                  >
-                    Admin
-                    <div className="absolute bottom-0 left-0 h-0.5 w-full scale-x-0 transform bg-[#0A4FD5] transition-transform group-hover:scale-x-100"></div>
-                  </Link>
-                )}
-              </nav>
-            </div>
-            <div className="flex items-center gap-2 md:gap-4">
-              {user ? (
-                <>
-                  <Link
-                    href={"/tai-khoan"}
-                    className="hidden items-center gap-2 rounded-lg px-4 py-2 text-[#111827] transition-colors hover:bg-[#F3F4F6] hover:text-[#0A4FD5] md:flex"
-                  >
-                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-[#0A4FD5] to-[#3DDC84] text-sm text-white">
-                      {user.username.charAt(0)}
-                    </div>
-                    <span className="hidden lg:block">{user.username}</span>
-                  </Link>
-                  <Link
-                    href={"/chat"}
-                    className="flex items-center gap-2 rounded-lg bg-gradient-to-r from-[#0A4FD5] to-[#0858e0] px-4 py-2 text-sm text-white transition-all hover:shadow-lg md:px-6 md:py-2.5 md:text-base"
-                  >
-                    <MessageCircle className="h-4 w-4" />
-                    <span className="hidden md:inline">Trò chuyện</span>
-                  </Link>
-                  <button
-                    // onClick={handleLogout}
-                    className="flex items-center gap-2 rounded-lg bg-gradient-to-r from-[#0A4FD5] to-[#0858e0] px-4 py-2 text-sm text-white transition-all hover:shadow-lg md:px-6 md:py-2.5 md:text-base"
-                  >
-                    <LogOut className="h-4 w-4" />
-                    <span className="hidden md:inline">Đăng xuất</span>
-                  </button>
-                </>
-              ) : (
-                <>
-                  <Link
-                    href={"/dang-nhap"}
-                    className="px-3 py-2 text-sm text-[#0A4FD5] transition-colors hover:text-[#083aa3] md:px-4 md:text-base"
-                  >
-                    Đăng nhập
-                  </Link>
-                  <button
-                    onClick={() => handleChatNow()}
-                    className="flex items-center gap-2 rounded-lg bg-gradient-to-r from-[#0A4FD5] to-[#0858e0] px-4 py-2 text-sm text-white transition-all hover:shadow-lg md:px-6 md:py-2.5 md:text-base"
-                  >
-                    <span className="hidden md:inline">Bắt đầu ngay</span>
-                    <span className="md:hidden">Bắt đầu</span>
-                    <ArrowRight className="h-4 w-4" />
-                  </button>
-                </>
-              )}
-              <button
-                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="rounded-lg p-2 transition-colors hover:bg-[#F3F4F6] lg:hidden"
-              >
-                {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-              </button>
-            </div>
-          </div>
-
-          {/* Mobile Menu */}
-          {mobileMenuOpen && (
-            <div className="mt-4 space-y-2 border-t border-gray-200 pt-4 pb-4 lg:hidden">
-              <Link
-                href={"/"}
-                onClick={() => {
-                  setMobileMenuOpen(false);
-                }}
-                className="block w-full rounded-lg px-4 py-2 text-left transition-colors hover:bg-[#F3F4F6]"
-              >
-                Trang chủ
-              </Link>
-              <Link
-                href={"/thu-tuc"}
-                onClick={() => {
-                  setMobileMenuOpen(false);
-                }}
-                className="block w-full rounded-lg px-4 py-2 text-left transition-colors hover:bg-[#F3F4F6]"
-              >
-                Thủ tục
-              </Link>
-              <button className="block w-full rounded-lg px-4 py-2 text-left transition-colors hover:bg-[#F3F4F6]">
-                Hướng dẫn
-              </button>
-              {user?.role === 1 && (
-                <Link
-                  href={"/admin"}
-                  onClick={() => {
-                    setMobileMenuOpen(false);
-                  }}
-                  className="block w-full rounded-lg px-4 py-2 text-left transition-colors hover:bg-[#F3F4F6]"
-                >
-                  Admin
-                </Link>
-              )}
-              {user && (
-                <Link
-                  href={"/tai-khoan"}
-                  onClick={() => {
-                    setMobileMenuOpen(false);
-                  }}
-                  className="block w-full rounded-lg px-4 py-2 text-left transition-colors hover:bg-[#F3F4F6]"
-                >
-                  Tài khoản
-                </Link>
-              )}
-            </div>
-          )}
-        </div>
-      </div>
 
       {/* Hero Slider */}
-      <div className="relative overflow-hidden bg-gradient-to-br from-white to-[#F3F4F6]">
+      <div className="relative mt-10 overflow-hidden bg-gradient-to-br from-white to-[#F3F4F6]">
         <div className="mx-auto max-w-[1440px] px-4 py-12 md:px-8 md:py-20">
           <div className="relative">
             {SLIDES.map((slide, index) => (
@@ -367,7 +194,7 @@ export const HomePage = () => {
               Tư vấn chi tiết và hướng dẫn từng bước cụ thể
             </p>
           </Link>
-          {user ? (
+          {user && user.role !== 3 ? (
             <Link
               href={"/tai-khoan"}
               className="group cursor-pointer rounded-2xl border border-gray-100 bg-white p-8 shadow-sm transition-all hover:shadow-xl"
@@ -536,13 +363,13 @@ export const HomePage = () => {
             <p className="mx-auto mb-8 max-w-2xl text-lg text-white/90">
               Hãy để GovAssist AI đồng hành cùng bạn trong mọi thủ tục hành chính
             </p>
-            <button
-              onClick={() => handleChatNow()}
+            <Link
+              href={"/chat"}
               className="group inline-flex items-center gap-2 rounded-lg bg-white px-8 py-4 text-[#0A4FD5] transition-all hover:shadow-xl"
             >
               Trò chuyện với AI ngay
               <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
-            </button>
+            </Link>
           </div>
         </div>
       </div>

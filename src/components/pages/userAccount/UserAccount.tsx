@@ -1,17 +1,22 @@
 "use client";
 
+import { E_LOCAL_STORAGE } from "@/enum";
 import { useApp } from "@/providers";
-import { User, Lock, Bell, History, Settings, ChevronLeft } from "lucide-react";
+import { User, Lock, Bell, History, Settings } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import dayjs from "dayjs";
 
 export const UserAccountPage = () => {
-  const { user } = useApp();
-  const chatHistory = [
-    { id: "1", title: "Đăng ký kinh doanh", date: "2025-11-20", messages: 12 },
-    { id: "2", title: "Chuyển nhượng đất", date: "2025-11-15", messages: 8 },
-    { id: "3", title: "Đăng ký BHXH", date: "2025-11-10", messages: 15 },
-    { id: "4", title: "Giấy phép xây dựng", date: "2025-11-05", messages: 20 },
-  ];
+  const { user, setUser, setConversations, conversations } = useApp();
+  const router = useRouter();
+
+  const handleLogout = () => {
+    setUser(undefined);
+    localStorage.removeItem(E_LOCAL_STORAGE.APP_NAME);
+    setConversations([]);
+    router.replace("/dang-nhap");
+  };
 
   const savedProcedures = [
     { id: "1", title: "Đăng ký kinh doanh", category: "Kinh doanh", savedDate: "2025-11-18" },
@@ -21,27 +26,6 @@ export const UserAccountPage = () => {
 
   return (
     <div className="min-h-screen bg-[#F3F4F6]">
-      {/* Header */}
-      <div className="border-b border-gray-200 bg-white">
-        <div className="mx-auto max-w-[1200px] px-8 py-6">
-          <div className="mb-4 flex items-center justify-between">
-            <Link href={"/"} className="text-[#0A4FD5] hover:underline">
-              <ChevronLeft />
-            </Link>
-            <div className="flex gap-3">
-              <Link
-                href={"chat"}
-                className="rounded-lg bg-[#0A4FD5] px-6 py-2 text-white transition-colors hover:bg-[#083aa3]"
-              >
-                Trò chuyện với AI
-              </Link>
-            </div>
-          </div>
-          <h1 className="mb-2 text-[#111827]">Tài khoản của tôi</h1>
-          <p className="text-[#111827] opacity-70">Quản lý thông tin cá nhân và lịch sử sử dụng</p>
-        </div>
-      </div>
-
       <div className="mx-auto max-w-[1200px] px-8 py-8">
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
           {/* Profile Card */}
@@ -78,12 +62,12 @@ export const UserAccountPage = () => {
                 </button>
               </div>
 
-              <Link
-                href={"dang-nhap"}
+              <button
+                onClick={handleLogout}
                 className="mt-6 w-full text-sm text-red-600 transition-colors hover:text-red-700"
               >
                 Đăng xuất
-              </Link>
+              </button>
             </div>
 
             {/* Stats */}
@@ -92,11 +76,7 @@ export const UserAccountPage = () => {
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-[#111827] opacity-70">Cuộc trò chuyện</span>
-                  <span className="text-[#0A4FD5]">{chatHistory.length}</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-[#111827] opacity-70">Thủ tục đã lưu</span>
-                  <span className="text-[#0A4FD5]">{savedProcedures.length}</span>
+                  <span className="text-[#0A4FD5]">{conversations?.length}</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-[#111827] opacity-70">Ngày tham gia</span>
@@ -120,17 +100,16 @@ export const UserAccountPage = () => {
                 </Link>
               </div>
               <div className="divide-y divide-gray-200">
-                {chatHistory.map((chat) => (
+                {conversations.slice(0, 4).map((chat) => (
                   <div
                     key={chat.id}
                     className="cursor-pointer p-6 transition-colors hover:bg-[#F3F4F6]"
                   >
-                    <div className="mb-2 flex items-start justify-between">
+                    <div className="flex items-center justify-between">
                       <h3 className="text-[#111827]">{chat.title}</h3>
-                      <div className="text-sm text-[#111827] opacity-50">{chat.date}</div>
-                    </div>
-                    <div className="text-sm text-[#111827] opacity-70">
-                      {chat.messages} tin nhắn
+                      <span className="text-xs text-[#111827] opacity-50">
+                        {dayjs(chat.updated_at).format("DD/MM/YYYY HH:mm")}
+                      </span>
                     </div>
                   </div>
                 ))}

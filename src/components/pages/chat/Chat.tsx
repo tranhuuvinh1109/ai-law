@@ -25,7 +25,6 @@ export const ChatPage = () => {
   const handleCreateNewConversation = (message = "") => {
     createNewConversationMutation(undefined, {
       onSuccess: (data) => {
-        console.log("data:", data);
         const basePath = `/chat/${data?.id}`;
 
         const queryString = message.trim() ? `?${new URLSearchParams({ message }).toString()}` : "";

@@ -8,12 +8,13 @@ import {
   updateConversation,
 } from "./chat.api";
 
-export const useGetAllConversation = () => {
+export const useGetAllConversation = ({ userId }: { userId?: string }) => {
   return useQuery({
-    queryKey: [QUERY_KEYS.GET_ALL_CONVERSATIONS],
+    queryKey: [QUERY_KEYS.GET_ALL_CONVERSATIONS, userId],
     queryFn: getAllConversations,
     refetchOnMount: false,
     refetchOnWindowFocus: false,
+    enabled: !!userId,
   });
 };
 

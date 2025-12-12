@@ -13,7 +13,9 @@ import { useGetAllConversation, useGetUserInfo, useRegisterGuestToken } from "@/
 import { UserInfoType } from "@/types/user.type";
 import { E_LOCAL_STORAGE } from "@/enum";
 import { ConversationItemType } from "@/types/conversation.type";
-// import { Header } from "@/components";
+import { Header } from "@/components";
+import { usePathname } from "next/navigation";
+import { cn } from "@/lib/utils";
 
 interface AppContextProps {
   user: UserInfoType | undefined;
@@ -30,7 +32,11 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   const [conversations, setConversations] = useState<ConversationItemType[]>([]);
   const effectRan = useRef(false);
 
-  const { data: conversationsData, refetch: refetchConversationList } = useGetAllConversation();
+  const pathname = usePathname();
+
+  const { data: conversationsData, refetch: refetchConversationList } = useGetAllConversation({
+    userId: user?.id,
+  });
   const { data: userFromApi } = useGetUserInfo();
   const { mutate: registerGuest } = useRegisterGuestToken();
 
@@ -77,8 +83,8 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     <AppContext.Provider
       value={{ user, setUser, conversations, setConversations, refetchConversationList }}
     >
-      {/* <Header /> */}
-      {children}
+      <Header />
+      <div className={cn("pt-[100px]", pathname.includes("chat") && "pt-0")}>{children}</div>
     </AppContext.Provider>
   );
 };
